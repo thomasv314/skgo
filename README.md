@@ -1,5 +1,11 @@
 # skgo - sidekiq api client in go
 
+API Client for monitoring the Sidekiq API.
+
+Includes an [AWS Lambda function](lambda/README.md).
+
+## Go API usage
+
 ```go
 package main
 

@@ -1,6 +1,6 @@
 package sidekiq
 
-type SidekiqInfo struct {
+type Info struct {
 	Queues    []string
 	Processes []string
 	Retries   int64
@@ -8,7 +8,7 @@ type SidekiqInfo struct {
 	Processed int64
 }
 
-func (sk SidekiqClient) Info() (info SidekiqInfo, err error) {
+func (sk SidekiqClient) Info() (info Info, err error) {
 	pipe := sk.Redis.Pipeline()
 
 	skProcessesCmd := pipe.SMembers(sk.processesKey())
@@ -25,7 +25,7 @@ func (sk SidekiqClient) Info() (info SidekiqInfo, err error) {
 	queues := queuesCmd.Val()
 	processes := skProcessesCmd.Val()
 
-	info = SidekiqInfo{
+	info = Info{
 		Retries:   retriesInt,
 		Processed: processedInt,
 		Failed:    failedInt,
