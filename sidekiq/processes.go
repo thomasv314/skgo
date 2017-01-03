@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 )
 
-type SidekiqProcess struct {
-	Id        string             `json:"id"`
-	Heartbeat int64              `json:"beat"`
-	Busy      int                `json:"busy"`
-	Info      SidekiqProcessInfo `json:"info"`
+type Process struct {
+	Name      string      `json:"id"`
+	Heartbeat int64       `json:"beat"`
+	Busy      int         `json:"busy"`
+	Info      ProcessInfo `json:"info"`
 }
 
-type SidekiqProcessInfo struct {
+type ProcessInfo struct {
 	Identity    string   `json:"identity"`
 	Hostname    string   `json:"hostname"`
 	Started     float32  `json:"started_at"`
@@ -22,20 +22,26 @@ type SidekiqProcessInfo struct {
 	Labels      []string `json:"labels"`
 }
 
-func (sk SidekiqClient) Processes() (processes []SidekiqProcess, err error) {
-	procNames, err := sk.Redis.SMembers(sk.processesKey()).Result()
+func (sk SidekiqClient) ProcessNames() (processNames []string) {
+	processNames, err := sk.Redis.SMembers(sk.processesKey()).Result()
 
 	if err != nil {
-		return make([]SidekiqProcess, 0), err
+		return
 	}
 
-	processes = make([]SidekiqProcess, len(procNames))
+	return processNames
+}
+
+func (sk SidekiqClient) Processes() (processes []Process, err error) {
+	procNames := sk.ProcessNames()
+
+	processes = make([]Process, len(procNames))
 
 	for i := range procNames {
 		procHash, _ := sk.Redis.HGetAll(sk.key(procNames[i])).Result()
 		processInfo, _ := processInfoFromJSON(procHash["info"])
-		processes[i] = SidekiqProcess{
-			Id:        procNames[i],
+		processes[i] = Process{
+			Name:      procNames[i],
 			Heartbeat: strToInt64(procHash["beat"]),
 			Busy:      strToInt(procHash["busy"]),
 			Info:      processInfo,
@@ -45,10 +51,8 @@ func (sk SidekiqClient) Processes() (processes []SidekiqProcess, err error) {
 	return
 }
 
-func processInfoFromJSON(jsonStr string) (process SidekiqProcessInfo, err error) {
+func processInfoFromJSON(jsonStr string) (process ProcessInfo, err error) {
 	jsonBytes := []byte(jsonStr)
-	if err = json.Unmarshal(jsonBytes, &process); err != nil {
-		return
-	}
+	err = json.Unmarshal(jsonBytes, &process)
 	return
 }
