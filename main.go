@@ -10,11 +10,14 @@ func main() {
 	info, _ := client.Info()
 	processes, _ := client.Processes()
 
-	for i = range processes {
+	fmt.Println(len(processes), "processes running", len(info.Queues), "queues",
+		info.Retries, "retries", info.Failed, "failed", info.Processed, "processed")
+
+	for i := range processes {
 		process := processes[i]
 		jobs := client.JobsForProcess(process.Name)
 
-		fmt.Println("Jobs for", proc.Name)
+		fmt.Println("Jobs for", process.Name)
 		for j := range jobs {
 			job := jobs[j]
 			fmt.Println("Job", job.Payload.Id, "running in", job.Queue)
