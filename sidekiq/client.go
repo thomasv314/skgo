@@ -27,6 +27,14 @@ type SidekiqClient struct {
 	Namespace string
 }
 
+func (sk SidekiqClient) Close() {
+	err := sk.Redis.Close()
+
+	if err != nil {
+		panic(err)
+	}
+}
+
 func (sk SidekiqClient) key(key string) string {
 	return sk.Namespace + ":" + key
 }
