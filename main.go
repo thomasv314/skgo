@@ -10,8 +10,13 @@ func main() {
 	info, _ := client.Info()
 	processes, _ := client.Processes()
 
-	fmt.Println(len(processes), "processes running", len(info.Queues), "queues",
-		info.Retries, "retries", info.Failed, "failed", info.Processed, "processed")
+	fmt.Println(
+		len(processes), "processes running",
+		len(info.Queues), "queues",
+		info.Retries, "retries",
+		info.Failed, "failed",
+		info.Processed, "processed",
+	)
 
 	for i := range processes {
 		process := processes[i]
