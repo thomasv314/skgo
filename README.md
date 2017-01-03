@@ -2,7 +2,7 @@
 
 API Client for monitoring the Sidekiq API.
 
-Includes an [AWS Lambda function](lambda/README.md).
+Includes an [AWS Lambda function](lambda).
 
 ## Go API usage
 
