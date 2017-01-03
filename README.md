@@ -1,6 +1,8 @@
 # skgo - sidekiq api client in go
 
 ```go
+package main
+
 import (
 	"fmt"
 	"github.com/thomasv314/skgo/sidekiq"
@@ -10,7 +12,7 @@ func main() {
 	client := sidekiq.NewClient("localhost:6379", "mynamespace")
 	info, _ := client.Info()
 	processes, _ := client.Processes()
-  defer client.Close()
+	defer client.Close()
 
 	fmt.Println(
 		len(processes), "processes running",

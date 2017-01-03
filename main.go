@@ -9,6 +9,7 @@ func main() {
 	client := sidekiq.NewClient("localhost:6379", "mynamespace")
 	info, _ := client.Info()
 	processes, _ := client.Processes()
+	defer client.Close()
 
 	fmt.Println(
 		len(processes), "processes running",
