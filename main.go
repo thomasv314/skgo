@@ -3,13 +3,19 @@ package main
 import (
 	"fmt"
 	"github.com/thomasv314/skgo/sidekiq"
+	"os"
 )
 
 func main() {
-	client := sidekiq.NewClient("localhost:6379", "mynamespace")
+	redis_addr := os.Getenv("SK_REDIS_ADDR")
+	redis_namespace := os.Getenv("SK_REDIS_NAMESPACE")
+
+	client := sidekiq.NewClient(redis_addr, redis_namespace)
 	info, _ := client.Info()
 	processes, _ := client.Processes()
 	defer client.Close()
+
+	fmt.Println("Listening on", redis_addr, "for namespace", redis_namespace)
 
 	fmt.Println(
 		len(processes), "processes running",

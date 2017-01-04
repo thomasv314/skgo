@@ -3,6 +3,8 @@
 *.a
 *.so
 
+.envrc
+
 # Folders
 _obj
 _test
