@@ -22,7 +22,7 @@ type ProcessInfo struct {
 	Labels      []string `json:"labels"`
 }
 
-func (sk SidekiqClient) ProcessNames() (processNames []string) {
+func (sk Client) ProcessNames() (processNames []string) {
 	processNames, err := sk.Redis.SMembers(sk.processesKey()).Result()
 
 	if err != nil {
@@ -32,7 +32,7 @@ func (sk SidekiqClient) ProcessNames() (processNames []string) {
 	return processNames
 }
 
-func (sk SidekiqClient) Processes() (processes []Process, err error) {
+func (sk Client) Processes() (processes []Process, err error) {
 	procNames := sk.ProcessNames()
 
 	processes = make([]Process, len(procNames))

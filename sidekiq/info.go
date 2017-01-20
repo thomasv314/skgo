@@ -8,7 +8,7 @@ type Info struct {
 	Processed int64
 }
 
-func (sk SidekiqClient) Info() (info Info, err error) {
+func (sk Client) Info() (info Info, err error) {
 	pipe := sk.Redis.Pipeline()
 
 	skProcessesCmd := pipe.SMembers(sk.processesKey())

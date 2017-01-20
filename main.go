@@ -2,38 +2,42 @@ package main
 
 import (
 	"fmt"
-	"github.com/thomasv314/skgo/sidekiq"
+	"github.com/thomasv314/skgo/sidekiq/cli"
 	"os"
 )
 
 func main() {
 	redis_addr := os.Getenv("SK_REDIS_ADDR")
 	redis_namespace := os.Getenv("SK_REDIS_NAMESPACE")
+	poll_duration_secs = os.Getenv("SK_REDIS_POLL_DURATION")
 
-	client := sidekiq.NewClient(redis_addr, redis_namespace)
-	info, _ := client.Info()
-	processes, _ := client.Processes()
-	defer client.Close()
+	cli.Start(redis_addr, redis_namespace, poll_duration_secs)
 
-	fmt.Println("Listening on", redis_addr, "for namespace", redis_namespace)
+	/*	client := sidekiq.NewClient(redis_addr, redis_namespace)
+		info, _ := client.Info()
+		processes, _ := client.Processes()
+		defer client.Close()
 
-	fmt.Println(
-		len(processes), "processes running",
-		len(info.Queues), "queues",
-		info.Retries, "retries",
-		info.Failed, "failed",
-		info.Processed, "processed",
-	)
+		fmt.Println("Listening on", redis_addr, "for namespace", redis_namespace)
 
-	for i := range processes {
-		process := processes[i]
-		jobs := client.JobsForProcess(process.Name)
+		fmt.Println(
+			len(processes), "processes running",
+			len(info.Queues), "queues",
+			info.Retries, "retries",
+			info.Failed, "failed",
+			info.Processed, "processed",
+		)
 
-		fmt.Println("Jobs for", process.Name)
-		for j := range jobs {
-			job := jobs[j]
-			fmt.Println("Job", job.Payload.Id, "running in", job.Queue)
-			fmt.Println("Payload", jobs[j].Payload)
+		for i := range processes {
+			process := processes[i]
+			jobs := client.JobsForProcess(process.Name)
+
+			fmt.Println("Jobs for", process.Name)
+			for j := range jobs {
+				job := jobs[j]
+				fmt.Println("Job", job.Payload.Id, "running in", job.Queue)
+				fmt.Println("Payload", jobs[j].Payload)
+			}
 		}
-	}
+	*/
 }

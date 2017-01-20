@@ -4,30 +4,30 @@ import (
 	"gopkg.in/redis.v5"
 )
 
-func NewClient(addr string, redisNs string) (sidekiqClient SidekiqClient) {
+func NewClient(addr string, redisNs string) (sidekiqClient Client) {
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     addr,
 		Password: "",
 		DB:       0,
 	})
 
-	sidekiqClient = SidekiqClient{
+	sidekiqClient = Client{
 		Redis:     redisClient,
 		Namespace: redisNs,
 	}
 
-	return SidekiqClient{
+	return Client{
 		Redis:     redisClient,
 		Namespace: redisNs,
 	}
 }
 
-type SidekiqClient struct {
+type Client struct {
 	Redis     *redis.Client
 	Namespace string
 }
 
-func (sk SidekiqClient) Close() {
+func (sk Client) Close() {
 	err := sk.Redis.Close()
 
 	if err != nil {
@@ -35,26 +35,26 @@ func (sk SidekiqClient) Close() {
 	}
 }
 
-func (sk SidekiqClient) key(key string) string {
+func (sk Client) key(key string) string {
 	return sk.Namespace + ":" + key
 }
 
-func (sk SidekiqClient) processesKey() string {
+func (sk Client) processesKey() string {
 	return sk.key("processes")
 }
 
-func (sk SidekiqClient) retryKey() string {
+func (sk Client) retryKey() string {
 	return sk.key("retry")
 }
 
-func (sk SidekiqClient) processedKey() string {
+func (sk Client) processedKey() string {
 	return sk.key("stat:processed")
 }
 
-func (sk SidekiqClient) failedKey() string {
+func (sk Client) failedKey() string {
 	return sk.key("stat:failed")
 }
 
-func (sk SidekiqClient) queuesKey() string {
+func (sk Client) queuesKey() string {
 	return sk.key("queues")
 }

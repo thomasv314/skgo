@@ -21,7 +21,7 @@ type JobPayload struct {
 	EnqueuedAt string   `json:"enqueued_at"`
 }
 
-func (sk SidekiqClient) JobsForProcess(procName string) (jobs []Job) {
+func (sk Client) JobsForProcess(procName string) (jobs []Job) {
 	jobsHash, _ := sk.Redis.HGetAll(sk.key(procName + ":workers")).Result()
 
 	jobs = make([]Job, len(jobsHash))
