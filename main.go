@@ -1,15 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"github.com/thomasv314/skgo/sidekiq/cli"
+	"github.com/thomasv314/skgo/cli"
+	"log"
 	"os"
+	"strconv"
 )
 
 func main() {
 	redis_addr := os.Getenv("SK_REDIS_ADDR")
 	redis_namespace := os.Getenv("SK_REDIS_NAMESPACE")
-	poll_duration_secs = os.Getenv("SK_REDIS_POLL_DURATION")
+
+	poll_duration_secs, err := strconv.Atoi(os.Getenv("SK_REDIS_POLL_DURATION"))
+	if err != nil {
+		log.Fatal("SK_REDIS_POLL_DURATION invalid value: ", err)
+	}
 
 	cli.Start(redis_addr, redis_namespace, poll_duration_secs)
 
