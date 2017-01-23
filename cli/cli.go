@@ -21,13 +21,14 @@ func Start(redis_addr, redis_namespace string, poll_secs int) {
 		log.Fatal(err)
 	}
 
+	hdr := newSkgoHeader(redis_addr, redis_namespace)
 	procLs := newProcessList()
 	jobTb := newJobTable()
 	queueLs := newQueueList()
 
 	ui.Body.AddRows(
 		ui.NewRow(
-			ui.NewCol(12, 0, procLs, queueLs, jobTb),
+			ui.NewCol(12, 0, hdr, procLs, jobTb),
 		),
 	)
 
@@ -69,10 +70,11 @@ func Start(redis_addr, redis_namespace string, poll_secs int) {
 	defer ui.Close()
 }
 
-func newSkgoHeader() (header *ui.Par) {
-	header := ui.NewPar("Borderless Text")
+func newSkgoHeader(addr, ns string) (header *ui.Par) {
+	header = ui.NewPar("skgo - [connected to " + addr + "](fg-green) - namespace: " + ns)
 	header.Y = 1
 	header.Border = false
+	return
 }
 
 func newProcessList() (processList *ui.List) {
