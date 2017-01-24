@@ -5,6 +5,7 @@ import (
 )
 
 type Job struct {
+	Process *Process   `json:omit`
 	Queue   string     `json:"queue"`
 	Payload JobPayload `json:"payload"`
 	RunAt   int64      `json:"run_at"`
@@ -19,22 +20,6 @@ type JobPayload struct {
 	CreatedAt  float32  `json:"created_at"`
 	Locale     string   `json:"en"`
 	EnqueuedAt string   `json:"enqueued_at"`
-}
-
-func (sk Client) JobsForProcess(procName string) (jobs []Job) {
-	jobsHash, _ := sk.Redis.HGetAll(sk.key(procName + ":workers")).Result()
-
-	jobs = make([]Job, len(jobsHash))
-
-	i := 0
-
-	for _, jobJson := range jobsHash {
-		job, _ := jobFromJSON(jobJson)
-		jobs[i] = job
-		i++
-	}
-
-	return
 }
 
 func jobFromJSON(jsonStr string) (job Job, err error) {
