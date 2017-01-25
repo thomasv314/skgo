@@ -11,6 +11,7 @@ type Process struct {
 	Heartbeat int64       `json:"beat"`
 	Busy      int         `json:"busy"`
 	Info      ProcessInfo `json:"info"`
+	Jobs      []Job
 }
 
 type ProcessInfo struct {
@@ -24,8 +25,36 @@ type ProcessInfo struct {
 	Labels      []string `json:"labels"`
 }
 
-func (p Process) Jobs() (jobs []Job) {
-	return p.client.JobsForProcess(p.Name)
+func NewProcess(name string, hash map[string]string, info ProcessInfo, sk *Client) (process Process) {
+
+	process = Process{
+		client:    sk,
+		Name:      name,
+		Heartbeat: strToInt64(hash["beat"]),
+		Busy:      strToInt(hash["busy"]),
+		Info:      info,
+	}
+
+	process.FetchJobs()
+
+	return
+}
+
+func (p *Process) FetchJobs() {
+	jobsKey := p.client.key(p.Name + ":workers")
+	jobsHash, _ := p.client.Redis.HGetAll(jobsKey).Result()
+
+	jobs := make([]Job, len(jobsHash))
+
+	i := 0
+
+	for _, jobJson := range jobsHash {
+		job, _ := jobFromJSON(jobJson)
+		jobs[i] = job
+		i++
+	}
+
+	p.Jobs = jobs
 }
 
 func processInfoFromJSON(jsonStr string) (process ProcessInfo, err error) {

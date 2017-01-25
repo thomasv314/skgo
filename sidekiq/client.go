@@ -43,15 +43,12 @@ func (sk Client) Processes() (processes []Process, err error) {
 	processes = make([]Process, len(procNames))
 
 	for i := range procNames {
+		procName := procNames[i]
 		procHash, _ := sk.Redis.HGetAll(sk.key(procNames[i])).Result()
-		processInfo, _ := processInfoFromJSON(procHash["info"])
-		processes[i] = Process{
-			client:    &sk,
-			Name:      procNames[i],
-			Heartbeat: strToInt64(procHash["beat"]),
-			Busy:      strToInt(procHash["busy"]),
-			Info:      processInfo,
-		}
+		procInfo, _ := processInfoFromJSON(procHash["info"])
+
+		processes[i] = NewProcess(procName, procHash, procInfo, &sk)
+
 	}
 
 	return
